@@ -3,22 +3,18 @@ class Charm extends Hadron {
     super(
       random(width),
       random(height),
-      20,
+      10,
       p5.Vector.random2D().mult(random(0.1, 1))
     );
     this.blue = color(110, 110, 255, 100);
   }
 
   render() {
-    push();
     blendMode(DIFFERENCE);
     noStroke();
     fill(this.blue);
-    translate(this.x, this.y);
     rotate(PI/4);
-    square(0, 0, this.rad);
-    pop();
-    
+    square(-this.radius, -this.radius, 2 * this.radius);
   }
 
   // gobble up charms for points
