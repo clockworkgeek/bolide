@@ -1,6 +1,13 @@
-var asteroidTotal = 0; 
-var podTotal = 0; 
-var astPointDisplay = false; 
+let asteroidTotal;
+
+function addScore(points, x, y) {
+  points = round(points);
+  asteroidTotal += points;
+  if (x && y) {
+    let clr = color(255, points > 0 ? 120 : 0, 0);
+    overlay.push(new Message(x, y, points, clr));
+  }
+}
 
 function displayScore(){
   push();
@@ -10,10 +17,9 @@ function displayScore(){
   noStroke();
   fill(200);
   textSize(15);
-  text("Level: " + level, 20, 30);
-  text("Score: " + asteroidTotal, 20, 50);
-  text("Bolide speed (+/-): " + astSpeed, 20, 70);
+  text(`Level: ${level}`, 20, 30);
+  text(`Score: ${asteroidTotal}`, 20, 50);
+  text(`Bolide speed: ${100 * astSpeed / 2}%`, 20, 70);
 
   pop()
 }
-

@@ -28,22 +28,30 @@
 
 // create a "true" clone where second ship is controlled by holding down shift key.
 
-var ship;
-var asteroids = [];
-var startingAstCount = 5;
-var level = 1;
-var startingShipSize = 12;
-var astSpeed = 2;
-var minAstSize = 15;
+// two player mode where each player has their own score and cannot hurt each other, or no scores kept and winner is last one alive
 
-var floaters = [];
-var lasers = [];
-var stars = [];
+let ship;
+let numTargets;
+let startingAstCount;
+let level;
+let astSpeed;
 
-var globalVolume = 0.1;
-var sShoot;
-var sHit;
-var sDead;
+let targets = [];
+let friendly = [];
+let enemy = [];
+let stars = [];
+let overlay = [];
+
+let sShoot;
+let sHit;
+let sDead;
+let sRestorer;
+
+const startingShipSize = 12;
+const maxShipSize = 50;
+const startingVolume = 0.1;
+const minAstSize = 15;
+const SPACE = 32;
 
 function preload() {
   // preload() runs once
@@ -54,221 +62,126 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth - 5, windowHeight - 5);
+  createCanvas(windowWidth, windowHeight);
+  cursor('none');
+
+  masterVolume(startingVolume);
+  sDead.setVolume(1 / 5);
 
   ship = new Ship();
-  for (var i = 0; i < startingAstCount; i++) {
-    asteroids.push(new Asteroid());
-  }
-
-  for (var j = 0; j < 1; j++) {
-    floaters.push(new Floater(1));
-  }
-
-  for (var k = 0; k < 100; k++) {
+  targets = [];
+  targets.push(new Ring());
+  numTargets = 0;
+  startingAstCount = 10;
+  asteroidTotal = 0;
+  friendly = [ship];
+  enemy = [];
+  stars = [];
+  for (let i = 0; i < 100; i++) {
     stars.push(new Star());
   }
+  overlay = [];
+  level = 0;
+  newLevel();
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+function newLevel() {
+  if (level !== 0) {
+    addScore(startingAstCount * 100);
+  }
+  startingAstCount++;
+  astSpeed = level * 0.5 + 2;
+  level++;
+
+  for (var i = 0; i < startingAstCount; i++) {
+    targets.push(new Asteroid());
+  }
+  ship.fireShieldOn += 100;
+  enemy.push(new Attacker());
+}
+
+function endGame() {
+  textSize(30);
+  fill(255);
+  text("game over :(", width / 2, 40);
+  noLoop();
+}
+
+// it is good practice to update all elements before drawing them
+function updateAll() {
+
+  for (const star of stars) star.update();
+
+  for (const target of targets) target.update();
+
+  for (const friend of friendly) {
+    friend.update();
+
+    for (const target of friend.collider(targets)) {
+      if (target instanceof Asteroid) {
+        if (friend instanceof Ship && !friend.fireShieldOn) {
+          friend.hit();
+        } else {
+          target.breakup();
+        }
+      } else if (target instanceof Heal) {
+        target.heal(ship);
+      } else if (target instanceof Ring) {
+        target.protect(ship);
+      }
+
+      if (friend instanceof Laser) friend.remove();
+    }
+    // flattening an array merges debris with the rest of rocks
+    targets = targets.flat();
+  }
+
+  for (const foe of enemy) {
+    foe.update();
+
+    for (const friend of foe.collider(friendly)) {
+      if (friend instanceof Laser && foe instanceof Attacker) {
+        foe.hit();
+        friend.remove();
+      }
+      else if (friend instanceof Ship) {
+        if (!friend.fireShieldOn) friend.hit(foe);
+        if (foe instanceof Laser) foe.remove();
+      }
+    }
+  }
+
+  for (const effect of overlay) effect.update();
+
+  if (numTargets == 0) newLevel();
 
 }
 
 function draw() {
+
+  // pause if not the focus and cannot receive key presses
+  if (focused) updateAll();
+
   background(0);
 
-  for (let i = 0; i < stars.length; i++) {
-    stars[i].render();
-    stars[i].update();
-    stars[i].edges();
-  }
-
-  if (asteroids.length == 0) {
-    asteroidTotal += startingAstCount * 100;
-    startingAstCount++;
-    level++;
-    astSpeed++;
-    for (var i = 0; i < startingAstCount; i++) {
-      asteroids.push(new Asteroid());
-    }
-  }
-
-  for (let i = 0; i < asteroids.length; i++) {
-    if (ship.hits(asteroids[i]) && !ship.fireShieldOn) {
-      ship.r += 0.1;
-      ship.clr += 0.5;
-      sDead.play();
-      sDead.setVolume(globalVolume / 5);
-    }
-    if (ship.hits(asteroids[i]) && ship.fireShieldOn) {
-      if (asteroids[i].r > minAstSize) {
-        let newAsteroids = asteroids[i].breakup();
-        asteroids = asteroids.concat(newAsteroids);
-        sHit.play();
-        sHit.setVolume(globalVolume / 2);
-      }
-      asteroids.splice(i, 1);
-      break;
-    }
-
-    if (ship.r > 50) {
-      textSize(30);
-      fill(255);
-      text("game over :(", width / 2, 40);
-      noLoop();
-    }
-
-    asteroids[i].render();
-    asteroids[i].update();
-    asteroids[i].edges();
-
-    // asteroids[i].displayPoints();
-  }
-
-  for (let i = 0; i < floaters.length; i++) {
-    if (ship.floaterConnect(floaters[i])) {
-      switch (floaters[i].type) {
-        case 'shrink':
-          if (ship.r >= startingShipSize) {
-            ship.fireShieldOn = 0;
-            ship.r -= 2;
-            ship.clr = 0;
-            asteroidTotal -= 5;
-            sRestorer.play();
-            sRestorer.setVolume(globalVolume);
-          }
-          if (ship.r < startingShipSize) {
-            floaters.splice(i, 1);
-            floaters.push(new Floater(1));
-          }
-          break;
-        case 'fireRing':
-          ship.fireShieldOn = 600; //ttl
-          ship.r -= 2;
-          ship.clr = 0;
-          asteroidTotal -= 5;
-          sRestorer.play();
-          sRestorer.setVolume(globalVolume);
-          floaters.splice(i, 1);
-          floaters.push(new Floater(0));
-          break;
-      }
-    }
-    floaters[i].render();
-    floaters[i].update();
-    floaters[i].edges();
-  }
-
-  for (let i = lasers.length - 1; i >= 0; i--) {
-    lasers[i].render();
-    lasers[i].update();
-
-    if (lasers[i].offscreen()) {
-      lasers.splice(i, 1);
-    } else {
-      for (var j = asteroids.length - 1; j >= 0; j--) {
-        if (lasers[i].hits(asteroids[j])) {
-          asteroids[j].pointDisplay = true;
-          sHit.play();
-          sHit.setVolume(globalVolume);
-
-          if (asteroids[j].r > minAstSize) {
-
-            let newAsteroids = asteroids[j].breakup();
-            asteroids = asteroids.concat(newAsteroids);
-          }
-          asteroids.splice(j, 1);
-          lasers.splice(i, 1);
-          break;
-        }
-        
-      }
-
-    }
-
-  }
-
-  for (let i = lasers.length - 1; i >= 0; i--) {
-    lasers[i].render();
-    lasers[i].update();
-
-    if (lasers[i].offscreen()) {
-      lasers.splice(i, 1);
-    } else {
-for (var k = floaters.length - 1; k >= 0; k--) {
-        if (lasers[i].hits(floaters[k])) {
-          sRestorer.play();
-          sRestorer.setVolume(globalVolume);
-
-          switch (floaters[k].type) {
-            case 'shrink':
-              if (ship.r >= startingShipSize) {
-                ship.fireShieldOn = 0;
-                ship.r -= 2;
-                ship.clr = 0;
-                asteroidTotal -= 5;
-                sRestorer.play();
-                sRestorer.setVolume(globalVolume);
-              }
-              if (ship.r < startingShipSize) {
-                floaters.splice(k, 1);
-                floaters.push(new Floater(1));
-              }
-              break;
-            case 'fireRing':
-              ship.fireShieldOn = 600; //ttl
-              ship.r -= 2;
-              ship.clr = 0;
-              asteroidTotal -= 5;
-              sRestorer.play();
-              sRestorer.setVolume(globalVolume);
-              floaters.splice(k, 1);
-              floaters.push(new Floater(0));
-              break;
-          }
-
-          lasers.splice(i, 1);
-          break;
-        }
-      }
-
-    }
-
-  }
-  
-  
-  ship.render();
-  ship.turn();
-  ship.update();
-  ship.edges();
-
+  for (const star of stars) star.draw();
+  for (const target of targets) target.draw();
+  for (const foe of enemy) foe.draw();
+  for (const friend of friendly) friend.draw();
   displayScore();
+  for (const effect of overlay) effect.draw();
 
-  // try instead of using a boolean
-  // use a value and decrement 
+  if (ship.radius > maxShipSize) endGame();
 
-  if (ship.fireShieldOn) {
-    ship.fireShieldOn--;
-  }
-
-}
-
-function keyReleased() {
-  ship.setRotation(0);
-  ship.boosting(false);
-  ship.reversing(false);
-  ship.thrustAlpha = 0;
 }
 
 function keyPressed() {
-  if (key == ' ') {
-    sShoot.play();
-    sShoot.setVolume(globalVolume);
-    lasers.push(new Laser(ship.pos, ship.heading));
-  } else if (keyCode == RIGHT_ARROW) {
-    ship.setRotation(0.1);
-  } else if (keyCode == LEFT_ARROW) {
-    ship.setRotation(-0.1);
-  } else if (keyCode == UP_ARROW) {
-    ship.boosting(true);
-  } else if (keyCode == DOWN_ARROW) {
-    ship.reversing(true);
+  // R to reset
+  if (keyCode == 82) {
+    setup();
   }
 }

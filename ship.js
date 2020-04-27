@@ -1,128 +1,114 @@
-class Ship {
+class Ship extends Hadron {
   constructor() {
-    this.pos = createVector(width / 2, height / 2);
-    this.r = startingShipSize;
+    super(width / 2, height / 2, startingShipSize);
     this.heading = 0;
-    this.rotation = 0;
-    this.vel = createVector(0, 0);
-    this.clr = 0;
     this.isBoosting = false;
-    this.isReversing = false;
-    this.thrustAlpha = 0;
     this.fireShieldOn = 0;
+    this.cooldown = 10; // firing speed
+    this.cooling = 0;
+    this.filling = color(0, 0, 0);
+    this.red = color(255, 0, 0);
+    this.white = color(255);
+    this.yellow = color(255, 255, 0);
   }
 
-  boosting(b) {
-    this.isBoosting = b;
+  // increase effective radius if shield is on since it is bigger than ship
+  collide(object) {
+    if (this.fireShieldOn) {
+      this.radius *= 3;
+      let result = super.collide(object);
+      this.radius /= 3;
+      return result;
+    }
+    return super.collide(object);
   }
 
-  reversing(r) {
-    this.isReversing = r;
+  // ship has taken damage
+  hit(source) {
+    ship.radius += 0.1;
+    sDead.play();
+    if (source instanceof Laser) {
+      addScore(-1, this.x, this.y);
+    }
   }
 
   update() {
+
+    // grow/shrink slowly to true size
+    this.radius += (startingShipSize - this.radius) / 1000;
+    this.filling.setRed(map(this.radius, startingShipSize, maxShipSize, 0, 255));
+
+    // fire control
+    if (this.cooling) {
+      this.cooling--;
+    } else if (keyIsDown(SPACE)) {
+      sShoot.play();
+      friendly.push(new Laser(this, randomGaussian(this.heading, 0.06)));
+      this.cooling = this.cooldown;
+    }
+
+    // navigation
+    if (keyIsDown(RIGHT_ARROW)) {
+      this.heading += 0.1;
+    }
+    if (keyIsDown(LEFT_ARROW)) {
+      this.heading -= 0.1;
+    }
+
+    // engine room
+    this.isBoosting = keyIsDown(UP_ARROW);
+    let thrustForce = p5.Vector.fromAngle(this.heading);
     if (this.isBoosting) {
-      this.boost();
-    }
-    if (this.isReversing) {
-      this.reverse();
-    }
-
-    this.pos.add(this.vel);
-    this.vel.mult(0.99);
-  }
-
-  boost() {
-    this.thrustAlpha = 200;
-    var thrustForce = p5.Vector.fromAngle(this.heading);
-    thrustForce.mult(0.1);
-    this.vel.add(thrustForce);
-  }
-
-  reverse() {
-    var reverseForce = p5.Vector.fromAngle(this.heading);
-    reverseForce.mult(-0.1);
-    this.vel.add(reverseForce);
-  }
-
-  hits(asteroid) {
-    var d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
-    if (this.fireShieldOn) {
-      d = d - 20;
-    }
-
-    if (d < this.r + asteroid.r) {
-      return true;
+      thrustForce.setMag(0.1);
+    } else if (keyIsDown(DOWN_ARROW)) {
+      thrustForce.setMag(-0.1);
     } else {
-      return false;
+      thrustForce.setMag(0);
     }
-  }
+    this.velocity.add(thrustForce);
 
-  floaterConnect(floater) {
-    var d = dist(this.pos.x, this.pos.y, floater.pos.x, floater.pos.y);
-    if (d < this.r + floater.r) {
-      return true;
-    } else {
-      return false;
+    this.velocity.mult(0.99);
+
+    // defenses
+    if (ship.fireShieldOn) {
+      ship.fireShieldOn--;
     }
+
+    super.update();
   }
 
   render() {
-    
+    const r = this.radius;
+
     // when making clone mode
     // use push and pop blocks to contain all clones
 
-    push();
-    translate(this.pos.x, this.pos.y);
-    rotate(this.heading + PI / 2);
-    fill(255, 255, 0, this.thrustAlpha);
-    noStroke();
-    triangle(-this.r + 4, this.r,
-      this.r - 4, this.r,
-      0, this.r + 19);
+    rotate(this.heading + HALF_PI);
+    if (this.isBoosting) {
+      fill(this.yellow);
+      noStroke();
+      triangle(-r + 4, r,
+        r - 4, r,
+        0, r + 19);
+    }
 
-    fill(this.clr, 0, 0);
-    stroke(255);
-    triangle(-this.r, this.r,
-      this.r, this.r,
-      0, -this.r - 11);
+    fill(this.filling);
+    stroke(this.white);
+    triangle(-r, r,
+      r, r,
+      0, -r - 11);
 
-    stroke(255, 0, 0);
-    triangle(-this.r, this.r - 7,
-      this.r, this.r - 7,
-      0, -(this.r + 11));
-    pop();
-    
+    stroke(this.red);
+    triangle(-r, r - 7,
+      r, r - 7,
+      0, -(r + 11));
+
     if (this.fireShieldOn) {
-      push();
       noFill();
-      stroke(255, 0, 0);
+      stroke(this.red);
       strokeWeight(3);
-      translate(this.pos.x, this.pos.y);
-      ellipse(0, 0, this.r * 5);
-      pop();
+      circle(0, 0, r * 5);
     }
-  }
-
-  edges() {
-    if (this.pos.x > width + this.r) {
-      this.pos.x = -this.r;
-    } else if (this.pos.x < -this.r) {
-      this.pos.x = width + this.r;
-    }
-    if (this.pos.y > height + this.r) {
-      this.pos.y = -this.r;
-    } else if (this.pos.y < -this.r) {
-      this.pos.y = height + this.r;
-    }
-  }
-
-  setRotation(a) {
-    this.rotation = a;
-  }
-
-  turn() {
-    this.heading += this.rotation;
   }
 
 }

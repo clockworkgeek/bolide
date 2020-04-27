@@ -1,49 +1,36 @@
-class Laser {
+// in essence, a sophisticated heat beam
+class Laser extends Hadron {
   constructor(spos, angle) {
-    this.pos = createVector(spos.x, spos.y);
-    this.vel = p5.Vector.fromAngle(angle);
-    this.vel.mult(10);
+    let vel = p5.Vector.fromAngle(angle, 10);
+    super(spos.x, spos.y, 15, vel);
+    this.valid = true;
+    this.yellow = color(255, 240, 20);
   }
 
   update() {
-    this.pos.add(this.vel);
+    this.add(this.velocity);
+    // invalidate self if outside bounds
+    if (this.x < 0 || this.y < 0 || this.x > width || this.y > height) {
+      this.remove();
+    }
   }
 
-  render() {
+  // override ancestor drawing with simpler way
+  draw() {
     push();
-    stroke(255, 240, 20);
-    strokeWeight(15);
-    point(this.pos.x, this.pos.y);
+    stroke(this.yellow);
+    strokeWeight(this.radius);
+    point(this.x, this.y);
     pop();
   }
 
-  hits(asteroid) {
-    var d = dist(this.pos.x, this.pos.y, asteroid.pos.x, asteroid.pos.y);
-    if (d < asteroid.r) {
-      if (asteroid.r > 30) {
-        asteroidTotal += 10;
-      } else if (asteroid.r < 25 && asteroid.r > 15) {
-        asteroidTotal += 25;
-      } else if (asteroid.r < 15) {
-        asteroidTotal += 100;
-      }
-      return true;
-    } else {
-      return false;
+  remove() {
+    let i = friendly.indexOf(this);
+    if (i >= 0) friendly.splice(i, 1);
+    else {
+      i = enemy.indexOf(this);
+      if (i >= 0) enemy.splice(i, 1);
     }
   }
-
-  
-  
-  offscreen() {
-    if (this.pos.x > width || this.pos.x < 0) {
-      return true;
-    }
-    if (this.pos.y > height || this.pos.y < 0) {
-      return true;
-    }
-    return false;
-  }
-
 
 }
