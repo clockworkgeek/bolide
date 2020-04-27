@@ -46,12 +46,15 @@ let sShoot;
 let sHit;
 let sDead;
 let sRestorer;
+let sFizzle;
+let sCharm;
 
 const startingShipSize = 12;
 const maxShipSize = 50;
 const startingVolume = 0.1;
 const minAstSize = 15;
 const SPACE = 32;
+const charmBatchSize = 10;
 
 function preload() {
   // preload() runs once
@@ -59,6 +62,9 @@ function preload() {
   sHit = loadSound('assets/jump.wav');
   sDead = loadSound('assets/spurs_clink.mp3');
   sRestorer = loadSound('assets/hint.wav');
+  sFizzle = loadSound('assets/fizzle.mp3');
+  sCharm = loadSound('assets/water_drop.wav');
+
 }
 
 function setup() {
@@ -97,9 +103,13 @@ function newLevel() {
   astSpeed = level * 0.5 + 2;
   level++;
 
-  for (var i = 0; i < startingAstCount; i++) {
+  for (let i = 0; i < startingAstCount; i++) {
     targets.push(new Asteroid());
   }
+  for (let i = 0; i < charmBatchSize; i++) {
+    targets.push(new Charm());
+  }
+
   ship.fireShieldOn += 100;
   enemy.push(new Attacker());
 }
@@ -122,6 +132,7 @@ function updateAll() {
     friend.update();
 
     for (const target of friend.collider(targets)) {
+      // green and red floating dots
       if (target instanceof Asteroid) {
         if (friend instanceof Ship && !friend.fireShieldOn) {
           friend.hit();
@@ -132,6 +143,8 @@ function updateAll() {
         target.heal(ship);
       } else if (target instanceof Ring) {
         target.protect(ship);
+      } else if (target instanceof Charm) {
+        target.score(ship);
       }
 
       if (friend instanceof Laser) friend.remove();
@@ -147,8 +160,7 @@ function updateAll() {
       if (friend instanceof Laser && foe instanceof Attacker) {
         foe.hit();
         friend.remove();
-      }
-      else if (friend instanceof Ship) {
+      } else if (friend instanceof Ship) {
         if (!friend.fireShieldOn) friend.hit(foe);
         if (foe instanceof Laser) foe.remove();
       }

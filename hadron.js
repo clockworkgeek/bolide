@@ -55,7 +55,7 @@ class Hadron extends p5.Vector {
 
   // draw will call render() as necessary
   draw() {
-    const r = this.radius
+    const r = this.radius;
     for (const [x, y] of this.locations()) {
       if (x > -r && y > -r && x < width + r && y < height + r) {
         push();
@@ -68,7 +68,7 @@ class Hadron extends p5.Vector {
 
   // override for actual drawing
   render() {
-    print("Do not call Hadron.render directly");
+    // print("Do not call Hadron.render directly");
   }
 
   // used for debugging

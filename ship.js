@@ -28,7 +28,8 @@ class Ship extends Hadron {
     ship.radius += 0.1;
     sDead.play();
     if (source instanceof Laser) {
-      addScore(-1, this.x, this.y);
+      sFizzle.play();
+      addScore(-10, this.x, this.y);
     }
   }
 

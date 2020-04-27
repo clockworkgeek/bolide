@@ -9,7 +9,7 @@ class Asteroid extends Hadron {
 
     this.total = floor(random(5, 15));
     this.offset = [];
-    this.clr = color(random(0, 255), random(20, 205), random(50, 200));
+    this.clr = color(10);
 
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.radius * 0.5, this.radius * 0.5);
@@ -19,6 +19,7 @@ class Asteroid extends Hadron {
   }
 
   render(x, y) {
+    super.render(); // Added to avoid 
     blendMode(DIFFERENCE);
     stroke(255);
     strokeWeight(1);
