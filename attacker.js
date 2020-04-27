@@ -1,11 +1,10 @@
-class Floater {
-  constructor(type) {
-    //    this.vel = p5.Vector.random2D();
-    this.vel = createVector(random(-astSpeed, astSpeed), random(-astSpeed, astSpeed));
+class Attacker {
+  constructor() {
+    this.vel = p5.Vector.random2D().mult(random(-astSpeed, astSpeed));
     this.pos = createVector(random(width), random(height));
     this.r = 11;
     this.angle = 0;
-    this.typeArr = ['shrink', 'fireRing'];
+    this.typeArr = ['starter'];
     this.type = this.typeArr[type];
   }
 
@@ -13,10 +12,9 @@ class Floater {
     this.pos.add(this.vel);
   }
 
-
   render() {
     switch (this.type) {
-      case 'shrink':
+      case 'starter':
         push();
         blendMode(DIFFERENCE);
         noStroke();
@@ -26,14 +24,6 @@ class Floater {
         rect(0, 0, this.r, this.r);
         pop();
         this.angle += 0.05;
-        break;
-      case 'fireRing':
-        push();
-        noFill();
-        strokeWeight(4);
-        stroke(255, 0, 0);
-        ellipse(this.pos.x, this.pos.y, this.r);
-        pop();
         break;
     }
   }
