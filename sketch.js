@@ -1,28 +1,28 @@
-// if ship is original size, give distinct color. 
+// if ship is original size, give distinct color.
 
-// INNA: restart button
+// INNA: restart button ..
 
 // NICO suggests at level 4 introduce a ship that shoots at you. (LOOSH SAYS LEVEL 5) DAD SAYS 2!!!!!
 
 // INNA suggests being able to "change your icon"
-// LOOSH say "yeah there should be a little button you hit before you start the game to choose your ship. 
-// OR I was thinking ship would "auto-generate" every time you play 
+// LOOSH say "yeah there should be a little button you hit before you start the game to choose your ship.
+// OR I was thinking ship would "auto-generate" every time you play
 
-// after level 10, the stars get big and hard to tell apart from the asteroids. 
+// after level 10, the stars get big and hard to tell apart from the asteroids.
 
-// add a floating object that when you shoot it, it creates a "clone" of your ship. 
+// add a floating object that when you shoot it, it creates a "clone" of your ship.
 
-// limit number of bullets per level. Only if ship lands on refilling satellites can the bullets be replenished. 
+// limit number of bullets per level. Only if ship lands on refilling satellites can the bullets be replenished.
 
-// score board tracks weird object collection count. 
+// score board tracks weird object collection count.
 
-// display point value when asteroids are hit. 
+// display point value when asteroids are hit.
 
 // when "special" asteroids collide, they combine into larger asteroids
 
-// add frame drift when ship gets to % of frame. track position and speed in space based on frame of reference. 
+// add frame drift when ship gets to % of frame. track position and speed in space based on frame of reference.
 
-// add map insert to track position 
+// add map insert to track position
 
 // track high scores
 
