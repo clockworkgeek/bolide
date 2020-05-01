@@ -24,4 +24,9 @@ class Charm extends Hadron {
       sCharm.play();
     } 
   }
+  
+  remove() {
+    let i = targets.indexOf(this);
+    targets.splice(i, 1);
+  }
 }
