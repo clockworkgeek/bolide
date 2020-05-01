@@ -118,6 +118,7 @@ function updateAll() {
         target.protect(ship);
       } else if (target instanceof Charm) {
         target.score(ship);
+        target.remove();
       }
 
       if (friend instanceof Laser) friend.remove();
