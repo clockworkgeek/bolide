@@ -4,7 +4,7 @@ class Asteroid extends Hadron {
       x || random(width),
       y || random(height),
       r * 0.5 || random(15, 50),
-      p5.Vector.random2D().mult(randomGaussian(0, level + 1))
+      p5.Vector.random2D().mult(randomGaussian(0, game ? game.level + 1 : 1))
     );
 
     this.total = floor(random(5, 15));
@@ -14,12 +14,10 @@ class Asteroid extends Hadron {
     for (let i = 0; i < this.total; i++) {
       this.offset[i] = random(-this.radius * 0.5, this.radius * 0.5);
     }
-
-    numTargets++;
   }
 
   render(x, y) {
-    super.render(); // Added to avoid 
+    super.render(); // Added to avoid
     blendMode(DIFFERENCE);
     stroke(255);
     strokeWeight(1);
@@ -51,19 +49,11 @@ class Asteroid extends Hadron {
       overlay.push(new Dust(this.x, this.y));
     }
 
-    let i = targets.indexOf(this);
-    if (i >= 0) {
-      if (this.radius > minAstSize) {
-        // replace self with smaller rocks
-        targets[i] = [
-          new Asteroid(this.x, this.y, this.radius),
-          new Asteroid(this.x, this.y, this.radius)
-        ];
-      } else {
-        // replace self with empty placeholder
-        targets[i] = [];
-      }
-      numTargets--;
+    game.removeTarget(this);
+    if (this.radius > minAstSize) {
+      // replace self with smaller rocks
+      game.addTarget(new Asteroid(this.x, this.y, this.radius));
+      game.addTarget(new Asteroid(this.x, this.y, this.radius));
     }
   }
 

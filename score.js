@@ -1,4 +1,4 @@
-let asteroidTotal;
+let asteroidTotal = 0;
 
 function addScore(points, x, y) {
   points = round(points);
@@ -17,9 +17,9 @@ function displayScore(){
   noStroke();
   fill(200);
   textSize(15);
-  text(`Level: ${level}`, 20, 30);
+  text(`Level: ${game.level}`, 20, 30);
   text(`Score: ${asteroidTotal}`, 20, 50);
-  text(`Bolide speed: ${100 * astSpeed / 2}%`, 20, 70);
+  text(`Bolide speed: ${100 * game.astSpeed / 2}%`, 20, 70);
 
   pop()
 }

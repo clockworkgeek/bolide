@@ -22,11 +22,6 @@ class Charm extends Hadron {
     if (ship.fireShieldOn == 0) {
       addScore(25, this.x, this.y);
       sCharm.play();
-    } 
-  }
-  
-  remove() {
-    let i = targets.indexOf(this);
-    targets.splice(i, 1);
+    }
   }
 }

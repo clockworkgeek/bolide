@@ -25,7 +25,7 @@ class Ship extends Hadron {
 
   // ship has taken damage
   hit(source) {
-    ship.radius += 0.1;
+    this.radius += 0.1;
     sDead.play();
     if (source instanceof Laser) {
       sFizzle.play();
@@ -44,7 +44,7 @@ class Ship extends Hadron {
       this.cooling--;
     } else if (keyIsDown(SPACE)) {
       sShoot.play();
-      friendly.push(new Laser(this, randomGaussian(this.heading, 0.06)));
+      game.addFriend(new Laser(this, randomGaussian(this.heading, 0.06)));
       this.cooling = this.cooldown;
     }
 
@@ -71,8 +71,8 @@ class Ship extends Hadron {
     this.velocity.mult(0.99);
 
     // defenses
-    if (ship.fireShieldOn) {
-      ship.fireShieldOn--;
+    if (this.fireShieldOn) {
+      this.fireShieldOn--;
     }
 
     super.update();

@@ -1,11 +1,10 @@
 class Attacker extends Hadron {
-  constructor() {
+  constructor(astSpeed) {
     super(
       100,
       100,
       20,
       p5.Vector.random2D().mult(astSpeed));
-    numTargets++;
     this.cooldown = 600; // 10 seconds before first shot
   }
 
@@ -13,10 +12,10 @@ class Attacker extends Hadron {
     super.update();
     this.cooldown--;
     if (this.cooldown <= 0) {
-      let angle = p5.Vector.sub(ship, this).heading();
+      let angle = p5.Vector.sub(game.ship, this).heading();
       sShoot.play();
-      enemy.push(new Laser(this, angle));
-      this.cooldown = max(randomGaussian(100 / astSpeed, 10), 10);
+      game.addEnemy(new Laser(this, angle));
+      this.cooldown = max(randomGaussian(100 / game.astSpeed, 10), 10);
     }
   }
 
@@ -32,11 +31,6 @@ class Attacker extends Hadron {
   hit() {
     sHit.play();
     addScore(1000, this.x, this.y);
-
-    const i = enemy.indexOf(this);
-    if (i >= 0) {
-      enemy.splice(i, 1);
-      numTargets--;
-    }
+    game.removeEnemy(this);
   }
 }
