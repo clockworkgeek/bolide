@@ -9,9 +9,13 @@ class Laser extends Hadron {
 
   update() {
     this.add(this.velocity);
-    this.radius -= 0.4;
     // invalidate self if outside bounds
-    if (this.x < 0 || this.y < 0 || this.x > width || this.y > height || this.radius < 0) {
+    if (this.x < 0 || this.y < 0 || this.x > width || this.y > height) {
+      this.remove();
+    }
+    // or if beyond natural range
+    this.radius -= 0.4;
+    if (this.radius < 0) {
       this.remove();
     }
   }
