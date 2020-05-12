@@ -30,7 +30,7 @@ class Attacker extends Hadron {
 
   hit() {
     sHit.play();
-    addScore(1000, this.x, this.y);
+    game.score.add(1000, this.x, this.y);
     game.removeEnemy(this);
   }
 }

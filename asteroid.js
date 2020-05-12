@@ -38,11 +38,11 @@ class Asteroid extends Hadron {
     sHit.play();
 
     if (this.radius > 30) {
-      addScore(10, this.x, this.y);
+      game.score.add(10, this.x, this.y);
     } else if (this.radius > 15) {
-      addScore(25, this.x, this.y);
+      game.score.add(25, this.x, this.y);
     } else {
-      addScore(100, this.x, this.y);
+      game.score.add(100, this.x, this.y);
     }
 
     for (let i = this.radius; i > 0; i--) {

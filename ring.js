@@ -20,7 +20,7 @@ class Ring extends Hadron {
   protect(ship) {
     ship.fireShieldOn += 300; //ttl
     ship.radius -= 2;
-    addScore(-150, this.x, this.y);
+    game.score.add(-150, this.x, this.y);
     sRestorer.play();
     game.targets.delete(this);
     game.targets.add(new Heal());

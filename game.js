@@ -1,8 +1,9 @@
 class Game
 {
-  constructor(level = 1, ship = new Ship()) {
+  constructor(level = 1, ship = new Ship(), score = new Score()) {
     this.level = level;
-    this.astSpeed = level * 0.5 + 2;
+    this.astSpeed = level * 0.5 + 1.5;
+    this.score = score;
     this.ship = ship;
     ship.fireShieldOn += 100;
     this.friendly = new Set();
@@ -96,7 +97,7 @@ class Game
 
     if (this.numTargets <= 0) {
       // start next level with ship in same place, condition
-      game = new Game(this.level + 1, this.ship);
+      game = new Game(this.level + 1, this.ship, this.score);
     }
   }
 
@@ -104,6 +105,7 @@ class Game
     for (const target of this.targets) target.draw();
     for (const foe of this.enemy) foe.draw();
     for (const friend of this.friendly) friend.draw();
+    this.score.draw(this.level, this.astSpeed);
 
     if (this.ship.radius > maxShipSize) this.end();
   }

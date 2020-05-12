@@ -71,7 +71,6 @@ function draw() {
 
   for (const star of stars) star.draw();
   game.draw();
-  displayScore();
   for (const effect of overlay) effect.draw();
 
 }

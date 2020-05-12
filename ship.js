@@ -29,7 +29,7 @@ class Ship extends Hadron {
     sDead.play();
     if (source instanceof Laser) {
       sFizzle.play();
-      addScore(-10, this.x, this.y);
+      game.score.add(-10, this.x, this.y);
     }
   }
 

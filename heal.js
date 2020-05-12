@@ -23,7 +23,7 @@ class Heal extends Hadron {
     if (ship.radius >= startingShipSize) {
       ship.fireShieldOn = 0;
       ship.radius -= 2;
-      addScore(-5, this.x, this.y);
+      game.score.add(-5, this.x, this.y);
       sRestorer.play();
     } else {
       // don't use addTarget() or removeTarget() because that affects target count
