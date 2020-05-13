@@ -1,11 +1,12 @@
 class Attacker extends Hadron {
-  constructor(astSpeed) {
+  constructor(speed) {
     super(
-      100,
-      100,
+      random(width),
+      random(height),
       20,
-      p5.Vector.random2D().mult(astSpeed));
+      p5.Vector.random2D().mult(speed));
     this.cooldown = 600; // 10 seconds before first shot
+    this.speed = speed;
   }
 
   update() {
@@ -15,7 +16,7 @@ class Attacker extends Hadron {
       let angle = p5.Vector.sub(game.ship, this).heading();
       sShoot.play();
       game.addEnemy(new Laser(this, angle));
-      this.cooldown = max(randomGaussian(100 / game.astSpeed, 10), 10);
+      this.cooldown = max(randomGaussian(100 / this.speed, 10), 10);
     }
   }
 
