@@ -17,7 +17,7 @@ class Game
     this.targets = new Set();
     this.targets.add(new Ring());
     for (let i = 0; i < initialAsteroids; i++) {
-      this.addTarget(new Asteroid());
+      this.addTarget(Asteroid.withSpeed(this.astSpeed));
     }
     for (let i = 0; i < charmBatchSize; i++) {
       this.targets.add(new Charm());
