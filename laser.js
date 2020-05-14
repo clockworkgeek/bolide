@@ -13,6 +13,11 @@ class Laser extends Hadron {
     if (this.x < 0 || this.y < 0 || this.x > width || this.y > height) {
       this.remove();
     }
+    // or if beyond natural range
+    this.radius -= 0.4;
+    if (this.radius < 0) {
+      this.remove();
+    }
   }
 
   // override ancestor drawing with simpler way
