@@ -4,7 +4,7 @@ class Heal extends Hadron {
       random(width),
       random(height),
       11,
-      p5.Vector.random2D().mult(random(0, level))
+      p5.Vector.random2D().mult(random(0, game.level))
     );
     this.green = color(10, 200, 10, 200);
   }
@@ -23,15 +23,12 @@ class Heal extends Hadron {
     if (ship.radius >= startingShipSize) {
       ship.fireShieldOn = 0;
       ship.radius -= 2;
-      addScore(-5, this.x, this.y);
+      game.score.add(-5, this.x, this.y);
       sRestorer.play();
     } else {
-      let i = targets.indexOf(this);
-      if (i < 0) {
-        targets.push(new Ring());
-      } else {
-        targets[i] = new Ring();
-      }
+      // don't use addTarget() or removeTarget() because that affects target count
+      game.targets.delete(this);
+      game.targets.add(new Ring());
     }
   }
 }

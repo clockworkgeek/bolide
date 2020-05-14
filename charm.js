@@ -20,13 +20,8 @@ class Charm extends Hadron {
   // gobble up charms for points
   score(ship) {
     if (ship.fireShieldOn == 0) {
-      addScore(25, this.x, this.y);
+      game.score.add(25, this.x, this.y);
       sCharm.play();
-    } 
-  }
-  
-  remove() {
-    let i = targets.indexOf(this);
-    targets.splice(i, 1);
+    }
   }
 }

@@ -4,7 +4,7 @@ class Ring extends Hadron {
       random(width),
       random(height),
       11,
-      p5.Vector.random2D().mult(random(0, level))
+      p5.Vector.random2D().mult(random(0, game ? game.level : 0))
     );
     this.red = color(255, 0, 0);
   }
@@ -20,13 +20,9 @@ class Ring extends Hadron {
   protect(ship) {
     ship.fireShieldOn += 300; //ttl
     ship.radius -= 2;
-    addScore(-150, this.x, this.y);
+    game.score.add(-150, this.x, this.y);
     sRestorer.play();
-    let i = targets.indexOf(this);
-    if (i < 0) {
-      targets.push(new Heal());
-    } else {
-      targets[i] = new Heal();
-    }
+    game.targets.delete(this);
+    game.targets.add(new Heal());
   }
 }
