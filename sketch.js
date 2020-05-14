@@ -44,7 +44,7 @@ function setup() {
     stars.push(new Star());
   }
 
-  game = new Game();
+  game = new Start();
 }
 
 function windowResized() {
@@ -79,6 +79,6 @@ function keyPressed() {
   // R to reset
   if (keyCode == 82) {
     asteroidTotal = 0;
-    game = new Game();
+    game = new Start();
   }
 }
