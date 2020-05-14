@@ -12,7 +12,7 @@ class Attacker extends Hadron {
   update() {
     super.update();
     this.cooldown--;
-    if (this.cooldown <= 0) {
+    if (this.cooldown <= 0 && game.ship) {
       let angle = p5.Vector.sub(game.ship, this).heading();
       sShoot.play();
       game.addEnemy(new Laser(this, angle));

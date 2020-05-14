@@ -2,7 +2,9 @@ class Game
 {
   constructor(level = 1, ship = new Ship(), score = new Score()) {
     this.level = level;
-    this.astSpeed = level * 0.5 + 1.5;
+    let speed = level * 0.5 + 1.5;
+    score.level = level;
+    score.speed = speed;
     this.score = score;
     this.ship = ship;
     ship.fireShieldOn += 100;
@@ -11,13 +13,13 @@ class Game
 
     this.numTargets = 0;
     this.enemy = new Set();
-    this.addEnemy(new Attacker(this.astSpeed));
+    this.addEnemy(new Attacker(speed));
 
     let initialAsteroids = startingAstCount + level;
     this.targets = new Set();
     this.targets.add(new Ring());
     for (let i = 0; i < initialAsteroids; i++) {
-      this.addTarget(Asteroid.withSpeed(this.astSpeed));
+      this.addTarget(Asteroid.withSpeed(speed));
     }
     for (let i = 0; i < charmBatchSize; i++) {
       this.targets.add(new Charm());
@@ -99,21 +101,16 @@ class Game
       // start next level with ship in same place, condition
       game = new Game(this.level + 1, this.ship, this.score);
     }
+
+    if (this.ship.radius > maxShipSize)  {
+      game = new Ending(this.score, ...this.enemy, ...this.targets);
+    }
   }
 
   draw() {
     for (const target of this.targets) target.draw();
     for (const foe of this.enemy) foe.draw();
     for (const friend of this.friendly) friend.draw();
-    this.score.draw(this.level, this.astSpeed);
-
-    if (this.ship.radius > maxShipSize) this.end();
-  }
-
-  end() {
-    textSize(30);
-    fill(255);
-    text("game over :(", width / 2, 40);
-    noLoop();
+    this.score.draw();
   }
 }

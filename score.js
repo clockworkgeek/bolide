@@ -12,7 +12,7 @@ class Score {
     }
   }
 
-  draw(level, speed){
+  draw(){
     push();
     fill(0, 200);
     stroke(242, 46, 242, 100);
@@ -20,9 +20,9 @@ class Score {
     noStroke();
     fill(200);
     textSize(15);
-    text(`Level: ${level}`, 20, 30);
+    text(`Level: ${this.level}`, 20, 30);
     text(`Score: ${this.total}`, 20, 50);
-    text(`Bolide speed: ${100 * speed / 2}%`, 20, 70);
+    text(`Bolide speed: ${100 * this.speed / 2}%`, 20, 70);
     pop()
   }
 }

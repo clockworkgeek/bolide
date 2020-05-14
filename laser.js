@@ -25,8 +25,8 @@ class Laser extends Hadron {
   }
 
   remove() {
-    game.removeFriend(this);
-    game.removeEnemy(this);
+    game.removeFriend && game.removeFriend(this);
+    game.removeEnemy && game.removeEnemy(this);
   }
 
 }
