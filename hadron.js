@@ -32,8 +32,18 @@ class Hadron extends p5.Vector {
   collide(object) {
     for (const [x, y] of this.locations()) {
       let disp = dist(x, y, object.x, object.y);
-      return disp < this.radius + object.radius;
+      let overlap = this.radius + object.radius - disp;
+      if (overlap > 0) {
+        // push force is a fraction of the overlap so that objects have several frames to do damage to each other
+        // also too much force is elastic
+        let push = object.copy().sub(x, y).setMag(overlap / 10);
+        object.velocity.add(push);
+        push.mult(-1); // equal and opposite reaction
+        this.velocity.add(push);
+        return true;
+      }
     }
+    return false;
   }
 
   // like Array.filter but returns a generator instead of another array
