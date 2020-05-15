@@ -166,6 +166,10 @@ function draw() {
 }
 
 function keyPressed() {
+  // F for fullscreen
+  if (keyCode == 70) {
+    fullscreen(!fullscreen());
+  }
   // R to reset
   if (keyCode == 82) {
     setup();
