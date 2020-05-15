@@ -25,7 +25,7 @@ class Ship extends Hadron {
 
   // ship has taken damage
   hit(source) {
-    ship.radius += 0.1;
+    ship.radius += 0.5;
     sDead.play();
     if (source instanceof Laser) {
       sFizzle.play();
