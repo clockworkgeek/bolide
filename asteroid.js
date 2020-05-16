@@ -1,8 +1,8 @@
 class Asteroid extends Hadron {
   constructor(x, y, r) {
     super(
-      x || random(width),
-      y || random(height),
+      x || random(playWidth),
+      y || random(playHeight),
       r * 0.5 || random(15, 50),
       p5.Vector.random2D().mult(randomGaussian(0, level + 1))
     );
@@ -19,7 +19,7 @@ class Asteroid extends Hadron {
   }
 
   render(x, y) {
-    super.render(); // Added to avoid 
+    super.render(); // Added to avoid
     blendMode(DIFFERENCE);
     stroke(255);
     strokeWeight(1);

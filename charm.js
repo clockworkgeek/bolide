@@ -1,8 +1,8 @@
 class Charm extends Hadron {
   constructor() {
     super(
-      random(width),
-      random(height),
+      random(playWidth),
+      random(playHeight),
       10,
       p5.Vector.random2D().mult(random(0.1, 1))
     );
@@ -22,9 +22,9 @@ class Charm extends Hadron {
     if (ship.fireShieldOn == 0) {
       addScore(25, this.x, this.y);
       sCharm.play();
-    } 
+    }
   }
-  
+
   remove() {
     let i = targets.indexOf(this);
     targets.splice(i, 1);

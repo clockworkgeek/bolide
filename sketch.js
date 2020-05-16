@@ -8,6 +8,8 @@ let numTargets;
 let startingAstCount;
 let level;
 let astSpeed;
+let playWidth, playHeight;
+let viewLeft, viewTop;
 
 let targets = [];
 let friendly = [];
@@ -43,6 +45,10 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   cursor('none');
+  playWidth = displayWidth;
+  playHeight = displayHeight;
+  viewLeft = 0;
+  viewTop = 0;
 
   masterVolume(startingVolume);
   sDead.setVolume(1 / 5);
@@ -145,6 +151,13 @@ function updateAll() {
 
   if (numTargets == 0) newLevel();
 
+  // max(…, 0) is never less than zero
+  let panLeft  = max(viewLeft + width * 1/4 - ship.x, 0);
+  let panRight = max(ship.x - viewLeft - width * 3/4, 0);
+  let panUp    = max(viewTop + height * 1/4 - ship.y, 0);
+  let panDown  = max(ship.y - viewTop - height  * 3/4, 0);
+  viewLeft = constrain(viewLeft - panLeft / 10 + panRight / 10, 0, playWidth - width);
+  viewTop  = constrain(viewTop - panUp / 10 + panDown / 10, 0, playHeight - height);
 }
 
 function draw() {
@@ -154,12 +167,18 @@ function draw() {
 
   background(0);
 
+  push();
+  translate(-viewLeft, -viewTop);
   for (const star of stars) star.draw();
   for (const target of targets) target.draw();
   for (const foe of enemy) foe.draw();
   for (const friend of friendly) friend.draw();
-  displayScore();
   for (const effect of overlay) effect.draw();
+  pop();
+
+  // don't translate score position since it is not relative to playing space
+  displayScore();
+  displayMap();
 
   if (ship.radius > maxShipSize) endGame();
 

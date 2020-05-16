@@ -1,8 +1,8 @@
 class Star extends Hadron {
   constructor() {
     super(
-      random(width),
-      random(height),
+      random(playWidth),
+      random(playHeight),
       random(0.1, 3),
       createVector(0.2, random(-0.3))
     );

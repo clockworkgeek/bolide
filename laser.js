@@ -10,7 +10,7 @@ class Laser extends Hadron {
   update() {
     this.add(this.velocity);
     // invalidate self if outside bounds
-    if (this.x < 0 || this.y < 0 || this.x > width || this.y > height) {
+    if (this.x < 0 || this.y < 0 || this.x > playWidth || this.y > playHeight) {
       this.remove();
     }
   }
