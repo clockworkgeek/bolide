@@ -178,6 +178,7 @@ function draw() {
 
   // don't translate score position since it is not relative to playing space
   displayScore();
+  displayMap();
 
   if (ship.radius > maxShipSize) endGame();
 
