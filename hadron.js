@@ -57,7 +57,7 @@ class Hadron extends p5.Vector {
   draw() {
     const r = this.radius;
     for (const [x, y] of this.locations()) {
-      if (x > -r && y > -r && x < width + r && y < height + r) {
+      if (x > viewLeft - r && y > viewTop - r && x < viewLeft + width + r && y < viewTop + height + r) {
         push();
         translate(x, y);
         this.render();
