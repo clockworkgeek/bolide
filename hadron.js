@@ -16,16 +16,16 @@ class Hadron extends p5.Vector {
     yield [x, y];
 
     // near edges
-    yield [x + width, y];
-    yield [x, y + height];
-    yield [x - width, y];
-    yield [x, y - height];
+    yield [x + playWidth, y];
+    yield [x, y + playHeight];
+    yield [x - playWidth, y];
+    yield [x, y - playHeight];
 
     // near corners
-    yield [x + width, y + height];
-    yield [x - width, y - height];
-    yield [x + width, y - height];
-    yield [x - width, y + height];
+    yield [x + playWidth, y + playHeight];
+    yield [x - playWidth, y - playHeight];
+    yield [x + playWidth, y - playHeight];
+    yield [x - playWidth, y + playHeight];
   }
 
   // true if these two hadron objects intersect
@@ -49,8 +49,8 @@ class Hadron extends p5.Vector {
   update() {
     this.add(this.velocity);
     // loop around edges
-    this.x = (this.x + width) % width;
-    this.y = (this.y + height) % height;
+    this.x = (this.x + playWidth) % playWidth;
+    this.y = (this.y + playHeight) % playHeight;
   }
 
   // draw will call render() as necessary

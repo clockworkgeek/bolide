@@ -8,6 +8,7 @@ let numTargets;
 let startingAstCount;
 let level;
 let astSpeed;
+let playWidth, playHeight;
 
 let targets = [];
 let friendly = [];
@@ -43,6 +44,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   cursor('none');
+  playWidth = displayWidth;
+  playHeight = displayHeight;
 
   masterVolume(startingVolume);
   sDead.setVolume(1 / 5);

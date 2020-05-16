@@ -1,8 +1,8 @@
 class Ring extends Hadron {
   constructor() {
     super(
-      random(width),
-      random(height),
+      random(playWidth),
+      random(playHeight),
       11,
       p5.Vector.random2D().mult(random(0, level))
     );
