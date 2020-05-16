@@ -35,11 +35,11 @@ class Hadron extends p5.Vector {
       let overlap = this.radius + object.radius - disp;
       if (overlap > 0) {
         // push force is a fraction of the overlap so that objects have several frames to do damage to each other
-        // also too much force is elastic
-        let push = object.copy().sub(x, y).setMag(overlap / 10);
-        object.velocity.add(push);
-        push.mult(-1); // equal and opposite reaction
-        this.velocity.add(push);
+        // also too much force would be elastic and big objects would move too much
+        let push1 = object.copy().sub(x, y).setMag(overlap / object.radius);
+        let push2 = createVector(x, y).sub(object).setMag(overlap / this.radius);
+        object.velocity.add(push1);
+        this.velocity.add(push2);
         return true;
       }
     }
